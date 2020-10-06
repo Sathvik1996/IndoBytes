@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>IndoBytes - System Test</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="static/vendor/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+
+        <!-- Custom styles for this template -->
+        <link rel="stylesheet" type="text/css" href="static/css/style.css">
+
+        <style>
+        section {
+            padding: 150px 0;
+        }
+        </style>
+
+    
+  
+</head>
+
+<body id="page-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+        <div class="container">
+          <a href="{{ url_for('login') }}"><img src="static/images/logo.png" alt="logo-image"/></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link " href="{{ url_for('forgotpassword') }}">Change Password</a>
+            </li>
+              <li class="nav-item">
+                <a class="nav-link " href="{{ url_for('login') }}">Logout</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link " href="#">{{Logged_User}}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <div class="jumbotron" style="padding-top:10%">
+        <h2 class="display-4">Welcome ! {{Logged_user_name}}</h2>
+        <p class="lead">This is a System Test Conducted by the IndoBytes as part of the Interview.</p>
+        <hr class="my-4">
+        <p>This is the second level of the Interview</p>
+      </div>
+
+
+
+      <div class="card text-center container">
+        <div class="card-body">
+          <h5 class="card-title">Total members Registered</h5>
+          <h2 class="card-text">{{Full_count}}</>
+          
+        </div>
+        <div class="card-footer text-muted">
+          Total
+        </div>
+      </div>
+
+
+<br>
+<br>
+      <div class="card text-center container">
+        <div class="card-body">
+          <h5 class="card-title">Total members Enabled</h5>
+          <h2 class="card-text">{{Enabled_count}}</br>
+          
+        </div>
+        <div class="card-footer text-muted">
+          Enabled
+        </div>
+      </div>
+
+
+      <br>
+      <br>
+
+      <div class="card text-center container">
+        <div class="card-body">
+          <h5 class="card-title">Total members Disabled</h5>
+          <h2 class="card-text">{{Disabled_count}}</>
+          
+        </div>
+        <div class="card-footer text-muted">
+          Disbled
+        </div>
+      </div>
+
+      <br>
+      <br>
+
+
+
+<!-- Footer -->
+<footer class="py-5 bg-dark">
+    
+      <p class="m-0 text-center text-white">INDOBYTES SYSTEM TEST DEMO &copy; 2020</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+  
+
+    <!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="static/vendor/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Plugin JavaScript -->
+<script type="text/javascript" src="static/vendor/jquery-easing/jquery.easing.min.js"></script>
+</body>
+
+</html>

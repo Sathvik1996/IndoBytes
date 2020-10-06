@@ -23,7 +23,7 @@
 
 <header class=" text-white" style="padding-top: 156px; padding-bottom: 100px;">
   <div class="container text-center">
-    <h2 style="color:brown; padding-bottom:4%">ADMIN DASHBOARD</h2>
+    <h2 style="color:#dae0e6; padding-bottom:4%">ADMIN DASHBOARD</h2>
     <table class="table">
       <thead class="thead-dark">
         <tr>
@@ -32,18 +32,64 @@
           <th scope="col">Email-ID</th>
           <th scope="col">Username</th>
           <th scope="col">Action</th>
+          <th scope="col">Update</th>
+          <th scope="col">Remove</th>
         </tr>
       </thead>
       <tbody style="background: snow;">
 
         {% for i in range(0,max_number) %}
+        {% if state[i] == "Enable" %}
         <tr>
+        {% endif %}
+        {% if state[i] == "Disable" %}
+        <tr style="background: dimgrey;">
+        {% endif %}
+        
           <th scope="row">{{i+1}}</th>
           <td>{{name[i]}}</td>
           <td>{{email[i]}}</td>
           <td>{{username[i]}}</td>
-          <td>{{state[i]}}</td>
+          <td>
+            {% if state[i] == "Enable" %}
+              <button type="button" class="btn btn-secondary"><a style="color: black;" href="/Alter/{{username[i]}}/Disable">Disable</a> </button>
+            {% endif %}
+
+            {% if state[i] == "Disable" %}
+            <button type="button" class="btn btn-info"><a style="color: black;" href="/Alter/{{username[i]}}/Enable">Enable</a> </button>
+            {% endif %}
+          </td>
+
+          {% if state[i] == "Enable" %}
+            <td><button type="button" class="btn btn-warning" ><a style="color: black;" href="/Edit/{{username[i]}}">Edit</a></button></td>
+            <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target=#{{username[i]}} >Delete</button></td>
+          {% endif %}
+          {% if state[i] == "Disable" %}
+            <td><button type="button" class="btn btn-warning" disabled>Edit</button></td>
+            <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target=#{{username[i]}} disabled>Delete</button></td>
+          {% endif %}
+          
         </tr>
+
+        <div class="modal fade" id={{username[i]}} tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body" style="color: black;">
+                Do You want to delete the User ?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger"> <a href="/delete/{{username[i]}}">Delete</a></button>
+              </div>
+            </div>
+          </div>
+        </div>
 
 
         {% endfor %}
@@ -51,6 +97,11 @@
       
       </tbody>
     </table>
+
+    <!-- Button trigger modal -->
+        <!-- Modal -->
+        
+
 
 
   </div>

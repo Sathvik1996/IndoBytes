@@ -21,17 +21,23 @@
 <!-- Navigation -->
 
 
+
+
 <header class=" text-white" style="padding-top: 156px; padding-bottom: 100px;">
 
 
   <div class="container text-center">
     {% if status_login == "Error" %}
-    <h3 style="color:brown">Credentials Doesn't Match.<br> Try Again.. !</h3>
+    <h3 style="color:rgb(241, 80, 80)">Credentials Doesn't Match.<br> Try Again.. !</h3>
     </a></li>
     {% endif %}
 
     {% if status_login == "Success" %}
-    <h3 style="color:brown">Login Successfull .. !</h3>
+    <h3 style="color:#dae0e6">Login Successfull .. !</h3>
+    </a></li>
+    {% endif %}
+    {% if status_login == "Disable" %}
+    <h3 style="color:#dae0e6">User Account has been Disabled By the Admin</h3>
     </a></li>
     {% endif %}
     <div class="signup-form">
@@ -43,15 +49,14 @@
       <div class="form-group">
               <input type="password" class="form-control" name="password" placeholder="Password" required="required">
           </div>
-          <div  style="float: left;color: black;     padding-bottom: 4%;"  class=""><a href="{{ url_for('forgotpassword') }}" style="    color: cornflowerblue;">Forgot Password?</a></div>
+          <div  style="float: left;color: black;     padding-bottom: 4%;"  class=""><a href="{{ url_for('forgotpassword') }}" style="    color: cornflowerblue;">Reset Password..!</a></div>
       <div class="form-group">
               <button type="submit" class="btn btn-success btn-lg btn-block">Login</button>
           </div>
           <div  style="color: black;   padding-top: 3%;  padding-bottom: 3%;"  class=""><a href="{{ url_for('register') }}" style="    color: cornflowerblue;">Create Account</a></div>
       </form>
-    
-  </div>
 
+      
 
   </div>
 </header>

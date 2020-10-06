@@ -28,12 +28,7 @@ body {
 }
 
 
-.signup-form h2:before {
-	left: 0;
-}
-.signup-form h2:after {
-	right: 0;
-}
+
 .signup-form .hint-text {
 	color: #999;
 	margin-bottom: 30px;
