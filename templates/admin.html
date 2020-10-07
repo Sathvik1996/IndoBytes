@@ -1,22 +1,63 @@
-{% extends 'base.html' %}
 
-{% block head %}
+<!DOCTYPE html>
+<html lang="en">
 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-<link rel="stylesheet" type="text/css" href="static/css/registerstyle.css">
+<head>
+    <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>IndoBytes - System Test</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="static/vendor/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+
+        <!-- Custom styles for this template -->
+        <link rel="stylesheet" type="text/css" href="static/css/style.css">
+
+        <style>
+        section {
+            padding: 150px 0;
+        }
+        </style>
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/css/registerstyle.css">
+    
+    
+  
+</head>
 
 
 
 
 
-{% endblock %}
+<body id="page-top">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+      <div class="container">
+        <a href="{{ url_for('login') }}"><img src="static/images/logo.png" alt="logo-image"/></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link " href="{{ url_for('adminlogout') }}">Logout</a>
+            </li>
+           
+            <li class="nav-item">
+              <a class="nav-link " href="{{ url_for('admin') }}">Admin</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-
-{% block content %}
 
 <!-- Navigation -->
 
@@ -124,4 +165,25 @@
 
 
 
-{% endblock %}
+<!-- Footer -->
+  <footer class="py-5 bg-dark">
+  <div class="container">
+    <p class="m-0 text-center text-white">INDOBYTES SYSTEM TEST DEMO &copy; 2020</p>
+  </div>
+  <!-- /.container -->
+</footer>
+
+
+  <!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="static/vendor/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Plugin JavaScript -->
+<script type="text/javascript" src="static/vendor/jquery-easing/jquery.easing.min.js"></script>
+</body>
+
+</html>
+
+
+
+

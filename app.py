@@ -15,7 +15,7 @@ mail = Mail(app)
 
 
 global user_data_retrived,admin_data_retrived,user_data,admin_data,db_mongo
-connect_link = "mongodb+srv://sathvik123:Systemtest123@cluster0.r6rot.mongodb.net/Indobytes-test?retryWrites=true&w=majority"
+connect_link = app.config['DB_CONNECTION_LINK']
 try:
     cluster = MongoClient(connect_link)
 except:
@@ -86,14 +86,11 @@ def Userprofile():
         findmyquery_D = { "state": {"$regex":"Disable" } }
         Disabled_count =  user_data.find(findmyquery_D).count()
         print(Disabled_count)
-
-        
         Full_count = user_data.find().count()
-        
-        
         return render_template("UserProfile.html",logged_user = logged_user,logged_user_name=logged_user_name,Enabled_count=Enabled_count,
                             Disabled_count=Disabled_count,Full_count=Full_count)
     return redirect(url_for('login'))
+
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -188,13 +185,16 @@ def register():
 @app.route('/adminpost', methods=['GET'])
 def adminpost():
     fetch_data()
-    return render_template("admin.html",status = "Authenticated",siid=siid_arr,name=name_arr,
-                    email=email_arr,username=username_arr,state=state_arr,max_number = index)
-        
+    if "Admin" in session:
+        return render_template("admin.html",status = "Authenticated",siid=siid_arr,name=name_arr,
+                        email=email_arr,username=username_arr,state=state_arr,max_number = index)
+    return redirect(url_for('admin'))
 
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
+    if "Admin" in session:
+        return redirect(url_for('adminpost'))
     Admin_pass_check = False
     fetch_data()
     admin_data = db_mongo['Indobytes-Test']
@@ -212,6 +212,7 @@ def admin():
         
         
         if Name == Admin_ID and Admin_pass_check == True:
+            session['Admin']="Admin"
             print("Admin Authenticated..... ")
             return redirect(url_for('adminpost'))
         else:
@@ -307,6 +308,11 @@ def logout():
    
     return redirect(url_for('login'))
 
+@app.route('/adminlogout', methods=['GET', 'POST'])
+def adminlogout():
+    session.pop("Admin",None)
+    return redirect(url_for('admin'))
+
 @app.route('/otp', methods=['GET', 'POST'])
 def otp():
     
@@ -315,11 +321,8 @@ def otp():
             Reg_Dict_in = session['Reg_Dict']
             otp_input = (request.form['otp'])
             
-            print("session['otp'] = ",session['otp'])
-            print("otp_input = ",otp_input)
             
-            print("session['otp'] = ",type(session['otp']))
-            print("otp_input = ",type(otp_input))
+            
             
             if "otp" in session:
                 if str(otp_input) == str(session['otp']):
