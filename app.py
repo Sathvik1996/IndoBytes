@@ -1,8 +1,9 @@
-from flask import Flask,request,render_template,request,redirect,url_for
+from flask import Flask,request,render_template,request,redirect,url_for,session
 from pymongo import MongoClient
 from flask_mail import Mail, Message
 import smtplib
 from random import randint
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 app = Flask(__name__)
@@ -70,27 +71,33 @@ def fetch_data():
 
 @app.route('/Userprofile', methods=['GET', 'POST'])
 def Userprofile():
-    print("Logged_User = ",Logged_User)
     
-    findmyquery_E = { "state": {"$regex":"Enable" } }
-    Enabled_count =  User_data.find(findmyquery_E).count()
-    print(Enabled_count)
+    if "user" in session:
+        Logged_User = session["user"]
+        Logged_user_name = session["username"]
+    
+        findmyquery_E = { "state": {"$regex":"Enable" } }
+        Enabled_count =  User_data.find(findmyquery_E).count()
+        print(Enabled_count)
 
-    findmyquery_D = { "state": {"$regex":"Disable" } }
-    Disabled_count =  User_data.find(findmyquery_D).count()
-    print(Disabled_count)
+        findmyquery_D = { "state": {"$regex":"Disable" } }
+        Disabled_count =  User_data.find(findmyquery_D).count()
+        print(Disabled_count)
 
-    
-    Full_count = User_data.find().count()
-    
-    
-    return render_template("UserProfile.html",Logged_User = Logged_User,Logged_user_name=Logged_user_name,Enabled_count=Enabled_count,
-                           Disabled_count=Disabled_count,Full_count=Full_count)
-    
+        
+        Full_count = User_data.find().count()
+        
+        
+        return render_template("UserProfile.html",Logged_User = Logged_User,Logged_user_name=Logged_user_name,Enabled_count=Enabled_count,
+                            Disabled_count=Disabled_count,Full_count=Full_count)
+    return redirect(url_for('login'))
 
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    if "user" in session:
+        return redirect(url_for('Userprofile'))
+        
     global Logged_User,Logged_user_name
     Logged_User = ""
     Logged_user_name = ""
@@ -98,25 +105,36 @@ def login():
     if request.method == 'POST':
         username = str(request.form['username'])
         password = str(request.form['password'])
-
+        password_check_usr = False
+        password_check_email = False
         Personlogindata_usr = User_data.find_one({"username": username})
         Personlogindata_email = User_data.find_one({"Email": username})
+        
+        if (Personlogindata_usr!=None):
+            password_check_usr = check_password_hash(Personlogindata_usr["password"],password)
+            
+        if (Personlogindata_email!=None):
+            password_check_email = check_password_hash(Personlogindata_email["password"],password)
 
-        if (Personlogindata_usr!=None and Personlogindata_usr["password"] == password) :
+        if (Personlogindata_usr!=None and password_check_usr==True  ) :
             if Personlogindata_usr["state"] == "Disable":
                 return render_template("login.html",status_login = "Disable")
             else:
                 Logged_User = Personlogindata_usr["username"] 
                 Logged_user_name =  Personlogindata_usr["name"]
+                session["user"] = Logged_User
+                session["username"] = Logged_user_name
                 return redirect(url_for('Userprofile'))
             
             
-        elif  (Personlogindata_email!=None and Personlogindata_email["password"] == password) : 
+        elif  (Personlogindata_email!=None and password_check_email==True) : 
             if Personlogindata_email["state"] == "Disable":
                 return render_template("login.html",status_login = "Disable")
             else:
                 Logged_User = Personlogindata_email["username"] 
                 Logged_user_name =  Personlogindata_email["name"]
+                session["user"] = Logged_User
+                session["username"] = Logged_user_name
                 return redirect(url_for('Userprofile'))
       
       
@@ -143,12 +161,13 @@ def register():
         new_Email = str(request.form['email'])
         new_password = str(request.form['password'])
         
+        
         Full_count = User_data.find().count()
         Reg_Dict = { "siid":Full_count+1,
                     "name":new_name,
                     "Email":new_Email,
                     "username":new_username,
-                    "password":new_password,
+                    "password":generate_password_hash(new_password),
                     "state":"Enable"}
         User_data.insert_one(Reg_Dict)
         send_mail(new_Email)
@@ -172,17 +191,23 @@ def adminpost():
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
+    Admin_pass_check = False
     fetch_data()
     Admin_data = db_mongo['Indobytes-Test']
     Admin_data_retrived = Admin_data.find({})
     for item in Admin_data_retrived:
         Admin_ID = item['adminID']
         Admin_password = item['password']
+    print (Admin_password)
     
     if request.method == 'POST':
         Name = str(request.form['AdminID'])
         Admin_pass = str(request.form['Password'])
-        if Name == Admin_ID and Admin_pass == Admin_password:
+        
+        Admin_pass_check = check_password_hash(Admin_password,Admin_pass)
+        
+        
+        if Name == Admin_ID and Admin_pass_check == True:
             print("Admin Authenticated..... ")
             return redirect(url_for('adminpost'))
         else:
@@ -208,7 +233,10 @@ def forgotpassword():
                 if Personlogindata_usr["state"] == "Disable":
                     return render_template("forgotpassword.html",status_login = "Disable")
                 else:
-                    User_data.update_one({"username":username_person},{"$set":{"password":password1}})
+                    User_data.update_one({"username":username_person},{"$set":{"password": generate_password_hash(password1)}})
+                    if "user" in session:
+                        Logged_user_name = session["username"]
+                        print(Logged_user_name)
                     return render_template("forgotpassword.html",status_login = "Success")
                     
             else:
@@ -216,7 +244,7 @@ def forgotpassword():
             
             
             # return render_template("forgotpassword.html",status_login = "Success")
-                    
+               
     return render_template("forgotpassword.html",status_login = "Entry")
 
 @app.route('/delete/<string:del_username>', methods=['GET', 'POST'])
@@ -246,7 +274,7 @@ def Edit_post():
         edit_username = person_record["username"]
         edit_password = person_record["password"]
         return render_template("Edit.html",status_login = "Entry",edit_name=edit_name,
-                              edit_email=edit_email,edit_username=edit_username,edit_password=edit_password )
+                              edit_email=edit_email,edit_username=edit_username,edit_password=(edit_password) )
     if request.method == 'POST':
         updtd_username = str(request.form['username'])
         updtd_firstname = str(request.form['first_name'])
@@ -255,10 +283,11 @@ def Edit_post():
         User_data.update_one({"username":edit_username_gl},{"$set":{"name":updtd_firstname,
                                                                     "Email":updtd_email,
                                                                     "username":updtd_username,
-                                                                    "password":updtd_password,
+                                                                    "password":generate_password_hash(updtd_password),
                                                                     "state":"Enable"}})
         
         return redirect(url_for('adminpost'))
+    return redirect(url_for('adminpost'))
     
 
 @app.route('/Edit/<string:edit_username>/', methods=['GET', 'POST'])
@@ -266,6 +295,13 @@ def Edit(edit_username):
     global edit_username_gl
     edit_username_gl = (edit_username)
     return redirect(url_for('Edit_post'))
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    session.pop("user",None)
+    session.pop("username",None)
+   
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)
