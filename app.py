@@ -78,7 +78,9 @@ def Userprofile():
     if "user" in session:
         logged_user = session["user"]
         logged_user_name = session["username"]
-    
+
+        print(logged_user)
+        print(logged_user_name)
         findmyquery_E = { "state": {"$regex":"Enable" } }
         Enabled_count =  user_data.find(findmyquery_E).count()
         print(Enabled_count)
@@ -87,6 +89,7 @@ def Userprofile():
         Disabled_count =  user_data.find(findmyquery_D).count()
         print(Disabled_count)
         Full_count = user_data.find().count()
+        
         return render_template("UserProfile.html",logged_user = logged_user,logged_user_name=logged_user_name,Enabled_count=Enabled_count,
                             Disabled_count=Disabled_count,Full_count=Full_count)
     return redirect(url_for('login'))
@@ -272,6 +275,8 @@ def disable(dis_username,flag):
 @app.route('/Edit', methods=['GET', 'POST'])
 def Edit_post():
     if request.method == 'GET':
+        if "edit_username" in session:
+            edit_username_gl = session['edit_username']
         person_record = user_data.find_one({"username": edit_username_gl})
         print(person_record)
         edit_name = person_record["name"]
@@ -281,6 +286,9 @@ def Edit_post():
         return render_template("Edit.html",status_login = "Entry",edit_name=edit_name,
                               edit_email=edit_email,edit_username=edit_username,edit_password=(edit_password) )
     if request.method == 'POST':
+        if "edit_username" in session:
+            edit_username_gl = session['edit_username']
+            session.pop("edit_username",None)
         updtd_username = str(request.form['username'])
         updtd_firstname = str(request.form['first_name'])
         updtd_email = str(request.form['email'])
@@ -298,8 +306,10 @@ def Edit_post():
 @app.route('/Edit/<string:edit_username>/', methods=['GET', 'POST'])
 def Edit(edit_username):
     global edit_username_gl
+    session['edit_username']=edit_username
     edit_username_gl = (edit_username)
     return redirect(url_for('Edit_post'))
+
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
