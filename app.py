@@ -11,14 +11,6 @@ app.config.from_object(__name__)
 app.config.from_pyfile('config.cfg')
 
 
-# app.config['SECRET_KEY'] = 
-# app.config['MAIL_SERVER']='smtp.gmail.com'
-# app.config['MAIL_PORT'] = 465
-# app.config['MAIL_USERNAME'] = 'sathvik435teenz@gmail.com'
-# app.config['MAIL_PASSWORD'] = 'Vs@8106809666'
-# app.config['MAIL_USE_TLS'] = False
-# app.config['MAIL_USE_SSL'] = True
-
 mail = Mail(app)
 
 
@@ -44,6 +36,7 @@ def send_mail(to_mail):
     msg = Message('IndoBytes SystemTest Demo', sender = 'sathvik435@gmail.com', recipients = [to_mail])
     OTP = randint(100000,999999)
     msg.body = "This is regarding confirmation of the Successfull Registration in the IndoBytes Website\n\n Your OTP is "+ str(OTP)
+    session['otp'] = OTP
     try:
         mail.send(msg)
         print("Mail sent")
@@ -179,9 +172,10 @@ def register():
                     "username":new_username,
                     "password":generate_password_hash(new_password),
                     "state":"Enable"}
-        user_data.insert_one(Reg_Dict)
+        # user_data.insert_one(Reg_Dict)
+        session['Reg_Dict']=Reg_Dict
         send_mail(new_Email)
-        return render_template("register.html",Register_login = "Success")
+        return redirect(url_for('otp'))
         
         
         
@@ -312,6 +306,32 @@ def logout():
     session.pop("username",None)
    
     return redirect(url_for('login'))
+
+@app.route('/otp', methods=['GET', 'POST'])
+def otp():
+    
+    if request.method == 'POST':
+        if "Reg_Dict" in session:
+            Reg_Dict_in = session['Reg_Dict']
+            otp_input = (request.form['otp'])
+            
+            print("session['otp'] = ",session['otp'])
+            print("otp_input = ",otp_input)
+            
+            print("session['otp'] = ",type(session['otp']))
+            print("otp_input = ",type(otp_input))
+            
+            if "otp" in session:
+                if str(otp_input) == str(session['otp']):
+                    user_data.insert_one(Reg_Dict_in)
+                    session.pop("Reg_Dict",None)
+                    return render_template("otp.html",otp_login = "Success")
+                else:
+                    return render_template("otp.html",otp_login = "Error")
+                
+                return redirect(url_for('Userprofile'))
+    return render_template("otp.html",otp_login = "Entry")
+
 
 if __name__ == '__main__':
     app.run(debug=True)
